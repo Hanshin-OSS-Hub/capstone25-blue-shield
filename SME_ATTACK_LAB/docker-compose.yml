@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+      # --- 1. 관리자 포털 (PHP로 변경) ---
+    admin_entry:
+      image: php:7.4-apache
+      container_name: admin_entry
+      ports:
+        - "8003:80"
+      volumes:
+        - ./admin_src:/var/www/html # PHP 기본 경로로 변경
+      networks:
+        sme_internal_network:
+          ipv4_address: 192.168.20.40
+
+    # --- 2. A 고객사 (OWASP Juice Shop) ---
+    client_a_owasp:
+      build:
+        context: ./client_a_juice_src 
+      container_name: client_a_OWASP
+      ports:
+        - "8000:3000"
+      networks:
+        sme_internal_network:
+          ipv4_address: 192.168.20.10
+
+
+    # --- 3. B 고객사 (DVWA) --
+    client_b_dvwa:
+      image: sagikazarmark/dvwa
+      container_name: client_b_dvwa
+      ports:
+        - "8001:80" 
+      volumes:
+        - ./dvwa_src:/var/www/html                      
+      networks:
+        sme_internal_network:
+         ipv4_address: 192.168.20.20
+    
+    # --- 4. C 고객사 (bwapp) -- 
+    client_c_bwapp:
+      image: raesene/bwapp
+      container_name: client_c_bwapp
+      ports:
+        - "8002:80"
+      volumes:
+      - ./bwapp_src:/app
+      networks:
+        sme_internal_network:
+          ipv4_address: 192.168.20.30
+   
+    # --- 5. 암호키 서버 (최종 목표) ---
+    key_vault_server:
+      image: hashicorp/vault:latest
+      container_name: key_vault_server
+      ports:
+        - "8200:8200"
+      environment:
+        - 'VAULT_DEV_ROOT_TOKEN_ID=my_root_token' # [보안취약점] KISA 가이드의 취약한 기본 인증 (Source: 8470)
+        - 'VAULT_ADDR=http://127.0.0.1:8200'
+      cap_add:
+        - IPC_LOCK
+      networks:
+        sme_internal_network:
+          ipv4_address: 192.168.20.50
+ 
+networks:
+  sme_internal_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.20.0/24
