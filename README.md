@@ -1,12 +1,12 @@
 # capstone25-blue-shield
 SME_ATTACK_LAB (작업 세팅)
 ---
-+ client_a_OWASP -->조용찬 
-+ client_b_dvwa -->송영욱 
-+ client_c_bwapp -->송영욱 
-+ key_vault_server -->송영욱 
-+ admin_entry -->송영욱 
-+ kali --> 송영욱 
++ client_a_OWASP 
++ client_b_dvwa  
++ client_c_bwapp  
++ key_vault_server 
++ admin_entry  
++ kali 
 + docker-dompos.xml 
 + 실습 설정 방법 파일 
  
