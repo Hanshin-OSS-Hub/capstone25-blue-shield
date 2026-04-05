@@ -1,0 +1,14 @@
+driver = mysql
+connect = host=host.docker.internal dbname=admin_portal user=portal_user password=StrongPortalPass!123
+default_pass_scheme = PLAIN
+
+password_query = \
+  SELECT email_address AS user, mail_password AS password \
+  FROM email_accounts \
+  WHERE email_address = '%u' AND is_active = 1
+
+user_query = \
+  SELECT 5000 AS uid, 5000 AS gid, \
+         CONCAT('/var/mail/vhosts/', SUBSTRING_INDEX(email_address, '@', -1), '/', SUBSTRING_INDEX(email_address, '@', 1)) AS home \
+  FROM email_accounts \
+  WHERE email_address = '%u' AND is_active = 1
