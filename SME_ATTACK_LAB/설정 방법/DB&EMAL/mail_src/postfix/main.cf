@@ -1,0 +1,34 @@
+myhostname = mail.company.local
+mydomain = company.local
+myorigin = $mydomain
+
+inet_interfaces = all
+inet_protocols = ipv4
+smtpd_peername_lookup = no
+
+mydestination = localhost
+mynetworks = 127.0.0.0/8 192.168.20.0/24 172.17.96.0/24
+
+virtual_mailbox_domains = mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf
+virtual_mailbox_base = /var/mail/vhosts
+virtual_mailbox_maps = mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf
+virtual_minimum_uid = 5000
+virtual_uid_maps = static:5000
+virtual_gid_maps = static:5000
+virtual_transport = lmtp:unix:private/dovecot-lmtp
+
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
+broken_sasl_auth_clients = yes
+
+smtpd_recipient_restrictions =
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_unauth_destination
+
+mailbox_size_limit = 0
+recipient_delimiter = +
+
+smtpd_tls_security_level = none
+smtp_tls_security_level = none
